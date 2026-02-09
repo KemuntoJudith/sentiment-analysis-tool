@@ -1,21 +1,6 @@
-Solution Requirements
-Functional Requirements
-The system shall ingest customer interaction data from: Emails, SMSs, Social media posts, Online banking app reviews
-The system shall: Clean raw text, Detect language, Handle informal banking language and code-mixing
-The system shall classify customer text into: Positive, Neutral and Negative sentiment
-The system shall identify: Banking service aspects, Sentiment polarity per aspect
-The system shall: Analyse incoming customer interactions in near real-time, Update sentiment insights dynamically
-The system shall provide: Overall sentiment trends, Aspect-level sentiment breakdown, Alerts for negative sentiment spikes
-The system shall: Compute accuracy, precision, recall, and F1-score, Support comparison with baseline models
-
-Non-Functional Requirements
-Target sentiment classification accuracy ≥ 90%
-Consistent performance across data sources
-Ability to explain sentiment predictions (important for banking context)
-Handle increasing data volume without performance degradation
-Use anonymised data
-No storage of personally identifiable customer information
-Dashboard must be understandable by non-technical bank staff
-Bias awareness
-Transparent model behaviour
-Compliance with data protection principles"
+pandas
+ipykernel
+jupyterlab
+google-play-scraper
+requests
+openpyxl
