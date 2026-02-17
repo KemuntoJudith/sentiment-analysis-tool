@@ -1,30 +1,42 @@
 from pathlib import Path
 import sys
 
+# Locate the project root directory using README.md as a marker.
 def get_repo_root():
-    """Locates the project root directory using README.md as a marker."""
+
+    # --- Google Colab ---
     if 'google.colab' in sys.modules:
+        print("Running in Google Colab.")
         return Path('/content')
 
-    # Start from the location of THIS file
-    try:
-        current = Path(__file__).resolve().parent
-        while current != current.parent:
-            if (current / "README.md").exists():
-                return current
-            current = current.parent
-    except NameError:
-        return Path.cwd()
-    
-    return Path.cwd()
+    # --- Local Environment ---
+    print("Running locally.")
 
-# Define the root
+    # Start from current working directory
+    current = Path().resolve()
+
+    # Walk upward until README.md is found
+    while current != current.parent:
+        if (current / "README.md").exists():
+            return current
+        current = current.parent
+
+    # If not found, raise error
+    raise RuntimeError(
+        "Project root not found. Ensure README.md exists in the repository root."
+    )
+
+
+# Define repository root once
 REPO_ROOT = get_repo_root()
 
-# THIS IS THE MISSING FUNCTION
+# Build a path relative to the project root.
 def get_path(*folders):
-    """
-    Combines project root with subfolders.
-    Usage: get_path("data", "raw") -> project_root/data/raw
-    """
     return REPO_ROOT.joinpath(*folders)
+
+# Create directory if it does not exist and return the path
+def ensure_path(*folders):
+    
+    path = get_path(*folders)
+    path.mkdir(parents=True, exist_ok=True)
+    return path
