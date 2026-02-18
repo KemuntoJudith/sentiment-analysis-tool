@@ -1,6 +1,5 @@
 
 # Python Cache Files
-
 __pycache__/
 *.pyc
 *.pyo
@@ -8,19 +7,17 @@ __pycache__/
 
 
 # Virtual Environments
-
 venv/
 env/
 .venv/
+thesis_env/
 
 
 # Jupyter Notebook Files
-
 .ipynb_checkpoints/
 
 
 # Environment Variables / Secrets
-
 .env
 *.env
 
@@ -31,22 +28,18 @@ data/raw_data/
 
 
 # Logs and Temporary Files
-
 *.log
 *.tmp
 
 
 # VS Code Settings
-
 .vscode/
 
 
 # Operating System Files
-
 .DS_Store
 Thumbs.db
 
 
 # Google Colab Files
-
 /content/
