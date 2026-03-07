@@ -43,3 +43,10 @@ Thumbs.db
 
 # Google Colab Files
 /content/
+
+# Model Files
+models/
+*.pt
+*.bin
+*.safetensors
+checkpoints/
