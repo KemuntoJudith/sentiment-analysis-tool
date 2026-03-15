@@ -1,5 +1,10 @@
-flask
+streamlit
 pandas
+plotly
+requests
+flask
 scikit-learn
 joblib
 gunicorn
+kaleido
+openpyxl
