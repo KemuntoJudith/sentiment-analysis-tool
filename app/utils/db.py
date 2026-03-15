@@ -1,16 +1,25 @@
-# Configure SLQAlchemy to connect to PostgreSQL and define the table structure for storing inference results.
+# SQLAlchemy setup for PostgreSQL
 
-from sqlalchemy import create_engine, Column, String, Float, DateTime, Integer
+from sqlalchemy import create_engine, Column, String, Float, DateTime, Integer, ForeignKey
 from sqlalchemy.orm import declarative_base, sessionmaker
 from datetime import datetime
 
 DATABASE_URL = "postgresql+psycopg2://postgres:6063@localhost:5432/sentiment_analysis_tool"
 
 engine = create_engine(DATABASE_URL)
-
 SessionLocal = sessionmaker(bind=engine)
-
 Base = declarative_base()
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    username = Column(String, unique=True, nullable=False)
+
+    password = Column(String, nullable=False)
+
+    role = Column(String, default="analyst")
 
 
 class InferenceResult(Base):
@@ -28,11 +37,13 @@ class InferenceResult(Base):
 
     confidence = Column(Float)
 
+    user_id = Column(Integer, ForeignKey("users.id"))
+
 
 Base.metadata.create_all(bind=engine)
 
 
-def save_result(text, aspect, sentiment, confidence):
+def save_result(text, aspect, sentiment, confidence, user_id):
 
     session = SessionLocal()
 
@@ -42,7 +53,8 @@ def save_result(text, aspect, sentiment, confidence):
             text=text,
             aspect=aspect,
             sentiment=sentiment,
-            confidence=confidence
+            confidence=confidence,
+            user_id=user_id
         )
 
         session.add(record)
