@@ -1,0 +1,7 @@
+flask
+pandas
+transformers
+torch
+scikit-learn
+sqlalchemy
+psycopg2-binary

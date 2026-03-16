@@ -1,4 +1,6 @@
 # Sentiment Monitoring Dashboard - Streamlit Frontend
+
+# Import necessary libraries
 import streamlit as st
 import requests
 import pandas as pd
@@ -6,6 +8,12 @@ import plotly.express as px
 from datetime import datetime
 import time
 import io
+import os  # added for environment variable support
+
+
+# CONFIGURE API BASE URL
+# Use environment variable API_BASE if set; fallback to local
+API_BASE = os.getenv("API_BASE", "http://127.0.0.1:5000")
 
 
 # SESSION MANAGEMENT
@@ -22,9 +30,7 @@ if "results_df" not in st.session_state:
 if "live_running" not in st.session_state:
     st.session_state["live_running"] = False
 
-API_BASE = "http://127.0.0.1:5000"
-
-
+    
 # LOGIN SIDEBAR
 if not st.session_state["logged_in"]:
     with st.sidebar:
