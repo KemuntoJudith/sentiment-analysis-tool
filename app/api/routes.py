@@ -1,7 +1,7 @@
 # Flask API Routes for Sentiment Analysis Tool
 
 from flask import Blueprint, request, jsonify
-from ..models.finbert_model import predict_sentiment
+from app.models.finbert_model import predict_sentiment
 from app.models.absa_model import analyze_aspects
 from app.utils.db import save_result, SessionLocal, InferenceResult
 
