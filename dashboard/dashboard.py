@@ -62,7 +62,7 @@ if st.session_state["logged_in"]:
 
     # Tabs
     tab1, tab2, tab3, tab4 = st.tabs(
-        ["Single Message", "Batch Upload", "Filtered Reports", "Live Mode"]
+        ["Single Message", "Batch Upload", "Reports and Analytics", "Live Feedback"]
     )
 
 
