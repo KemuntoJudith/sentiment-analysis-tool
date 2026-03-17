@@ -33,7 +33,7 @@ jupyter notebook
 ### Live Demo
 Access the Streamlit dashboard here:
 
-https://settings-bfssks7pn28sjdxvhbeqdr.streamlit.app/
+https://sentiment-analysis-tool-2026.streamlit.app/
 
 ### Features
 - Real-time sentiment analysis
