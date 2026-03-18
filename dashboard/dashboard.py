@@ -30,8 +30,8 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
 # Local models & DB
-from app.models.finbert_model import predict_sentiment as predict_sentiment_local
-from app.models.absa_model import analyze_aspects as analyze_aspects_local
+from app.models.finbert_model import predict_sentiment
+from app.models.absa_model import analyze_aspects
 from app.utils.db import save_result, get_all_results
 
 # CONFIG
