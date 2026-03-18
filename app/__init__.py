@@ -1,5 +1,4 @@
 from flask import Flask
-from app.api.routes import api_routes
 from app.api.analytics_routes import analytics_routes
 
 def create_app():
