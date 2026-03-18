@@ -4,7 +4,7 @@ This repository contains the implementation of a machine learning based sentimen
 
 Environment Setup
 1️ Clone the Repository
-git clone https://github.com/YOUR_USERNAME/sentiment-analysis-tool.git
+git clone https://github.com/KemuntoJudith/sentiment-analysis-tool.git
 cd sentiment-analysis-tool
 
 2️ Create Virtual Environment
