@@ -20,6 +20,7 @@ if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
 
 print("Project root added to sys.path:", PROJECT_ROOT)
+print("Files in project root:", os.listdir(PROJECT_ROOT))
 
 # IMPORTS
 import streamlit as st
