@@ -46,7 +46,6 @@ Thumbs.db
 /content/
 
 # Model Files
-models/
 *.pt
 *.bin
 *.safetensors

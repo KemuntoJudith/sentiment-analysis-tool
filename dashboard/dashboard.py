@@ -50,8 +50,8 @@ def call_predict_sentiment(text, user_id=None):
         response.raise_for_status()
         return response.json()
     else:
-        sentiment_result = predict_sentiment_local(text)
-        aspect_result = analyze_aspects_local(text)
+        sentiment_result = predict_sentiment(text)
+        aspect_result = analyze_aspects(text)
 
         aspects = aspect_result.get("aspects", [])
         aspect = aspects[0].get("aspect", "general") if aspects else "general"
