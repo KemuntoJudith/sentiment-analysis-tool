@@ -1,13 +1,6 @@
 # Sentiment Monitoring Dashboard - Streamlit Frontend
 # Now accessible without login
 
-# ENVIRONMENT SETUP
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except:
-    pass
-
 import sys
 import os
 import io
@@ -18,6 +11,13 @@ from datetime import datetime
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if PROJECT_ROOT not in sys.path:
     sys.path.insert(0, PROJECT_ROOT)
+
+# ENVIRONMENT SETUP
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except:
+    pass
 
 print("Project root added to sys.path:", PROJECT_ROOT)
 print("Files in project root:", os.listdir(PROJECT_ROOT))

@@ -1,5 +1,4 @@
-# Starts the Flast backend server. 
-# This is the entry point of the application. 
+# Starts the backend server. 
 # It initializes the Flask app and registers the API routes defined in the `app.api.routes` module. 
 # The server runs in debug mode for development purposes.
 
@@ -16,4 +15,4 @@ app.register_blueprint(api_routes)
 app.register_blueprint(analytics_routes, url_prefix="/analytics")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True)#
