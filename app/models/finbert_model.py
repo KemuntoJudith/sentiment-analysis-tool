@@ -7,7 +7,7 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from app.preprocessing.text_preprocessing import preprocess_text
 
 # Path to fine-tuned model
-MODEL_PATH = "models/finbert_final"
+MODEL_PATH = "../../models/finbert_final"
 
 # Load tokenizer and model
 tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
