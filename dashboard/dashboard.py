@@ -39,28 +39,38 @@ from app.utils.db import save_result, get_all_results
 API_BASE = st.secrets.get("API_BASE") or os.getenv("API_BASE")
 
 # WRAPPER FUNCTIONS
+
 def call_predict_sentiment(text, user_id=None):
-    """Handles both API and local inference safely"""
-    if API_BASE:
-        response = requests.post(
-            f"{API_BASE}/predict-sentiment",
-            json={"text": text, "user_id": user_id},
-            timeout=10
-        )
-        response.raise_for_status()
-        return response.json()
-    else:
-        sentiment_result = predict_sentiment(text)
-        aspect_result = analyze_aspects(text)
+    try:
+        if API_BASE:
+            response = requests.post(
+                f"{API_BASE}/predict-sentiment",
+                json={"text": text, "user_id": user_id},
+                timeout=10
+            )
+            response.raise_for_status()
+            return response.json()
+        else:
+            sentiment_result = predict_sentiment(text)
+            aspect_result = analyze_aspects(text)
 
-        aspects = aspect_result.get("aspects", [])
-        aspect = aspects[0].get("aspect", "general") if aspects else "general"
+            aspects = aspect_result.get("aspects", [])
+            aspect = aspects[0].get("aspect", "general") if aspects else "general"
 
+            return {
+                "text": text,
+                "sentiment": sentiment_result.get("sentiment", "neutral"),
+                "confidence": sentiment_result.get("confidence", 0.0),
+                "aspect": aspect
+            }
+
+    except Exception as e:
+        st.error(f"Inference failed: {e}")
         return {
             "text": text,
-            "sentiment": sentiment_result.get("sentiment", "neutral"),
-            "confidence": sentiment_result.get("confidence", 0.0),
-            "aspect": aspect
+            "sentiment": "error",
+            "confidence": 0.0,
+            "aspect": "error"
         }
 
 # PDF GENERATOR
@@ -135,8 +145,10 @@ with tab1:
                         text=result["text"],
                         aspect=result["aspect"],
                         sentiment=result["sentiment"],
-                        confidence=result["confidence"]
+                        confidence=result["confidence"],
+                        user_id=1  
                     )
+
                 except Exception as e:
                     st.warning(f"Could not save result to DB: {e}")
 
@@ -164,11 +176,13 @@ def analyze_batch(df_upload):
             # --- SAVE TO DATABASE ---
             try:
                 save_result(
-                    text=res["text"],
-                    aspect=res["aspect"],
-                    sentiment=res["sentiment"],
-                    confidence=res["confidence"]
-                )
+                        text=res["text"],
+                        aspect=res["aspect"],
+                        sentiment=res["sentiment"],
+                        confidence=res["confidence"],
+                        user_id=1  
+                    )
+                
             except Exception as e:
                 st.warning(f"Could not save row {i} to DB: {e}")
 
@@ -259,11 +273,12 @@ with tab3:
 
             # Save to database
             save_result(
-                text=result_data["text"],
-                aspect=result_data["aspect"],
-                sentiment=result_data["sentiment"],
-                confidence=result_data["confidence"]
-            )
+                        text=result["text"],
+                        aspect=result["aspect"],
+                        sentiment=result["sentiment"],
+                        confidence=result["confidence"],
+                        user_id=1  
+                    )
 
             st.success("Feedback analyzed and saved!")
 
@@ -368,12 +383,44 @@ if not data.empty:
     kpi3.metric("Top Topic", top_aspect)
     kpi4.metric("Avg Confidence", f"{avg_conf:.2f}")
 
+
+
     # Sentiment Pie Chart
     st.subheader("Sentiment Distribution")
-    pie_df = data["sentiment"].value_counts().reset_index()
-    pie_df.columns = ["sentiment", "count"]
-    fig1 = px.pie(pie_df, names="sentiment", values="count")
-    st.plotly_chart(fig1, use_container_width=True)
+
+    # Clean data (VERY IMPORTANT)
+    clean_data = data.copy()
+    clean_data["sentiment"] = clean_data["sentiment"].astype(str).str.lower().str.strip()
+
+    # Remove nulls
+    clean_data = clean_data[clean_data["sentiment"].notna()]
+
+    # Check if we have data to display
+    if not clean_data.empty:
+        pie_df = clean_data["sentiment"].value_counts().reset_index()
+        pie_df.columns = ["sentiment", "count"]
+
+        fig1 = px.pie(
+            pie_df,
+            names="sentiment",
+            values="count",
+            color="sentiment",
+            color_discrete_map={
+                "negative": "#EF4444",   # red
+                "neutral": "#F59E0B",    # amber
+                "positive": "#10B981"    # green
+            }
+        )
+
+        # Improve appearance
+        fig1.update_traces(textposition='inside', textinfo='percent+label')
+        fig1.update_layout(showlegend=True)
+
+        st.plotly_chart(fig1, use_container_width=True)
+
+    else:
+        st.warning("No sentiment data available to display chart.")
+
 
     # Aspect Bar Chart
     st.subheader("Aspect Distribution")

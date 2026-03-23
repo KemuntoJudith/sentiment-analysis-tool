@@ -56,9 +56,9 @@ import traceback
 def save_result(text, aspect, sentiment, confidence, user_id):
     if user_id is None:
         print("🚨 save_result called WITHOUT user_id!")
-        traceback.print_stack()   # 🔥 THIS SHOWS EXACT CALL LOCATION
+        traceback.print_stack() 
 
-    # existing code below...
+    
 def save_result(text, aspect, sentiment, confidence, user_id=None):
     if not SessionLocal:
         return  # Skip in cloud

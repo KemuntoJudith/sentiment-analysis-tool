@@ -1,5 +1,3 @@
-
-
 # For streamlit app - moved core logic to separate functions for reuse in both Flask API and Streamlit UI
 
 from app.models.finbert_model import predict_sentiment as finbert_predict
@@ -15,10 +13,20 @@ def predict_sentiment_local(text: str, user_id: int = None):
     Run sentiment prediction + aspect detection and optionally save to DB.
     Returns a dict similar to Flask API.
     """
-    # FinBERT sentiment
-    sentiment_result = finbert_predict(text)
-    sentiment = sentiment_result["sentiment"]
-    confidence = sentiment_result["confidence"]
+
+    try:
+        # FinBERT sentiment
+        sentiment_result = finbert_predict(text)
+        sentiment = sentiment_result["sentiment"]
+        confidence = sentiment_result["confidence"]
+    except Exception as e:
+        # 🔥 Prevent app crash if model fails
+        return {
+            "text": text,
+            "sentiment": "error",
+            "confidence": 0.0,
+            "aspect": "error"
+        }
 
     # Aspect detection
     aspect_result = analyze_aspects(text)
@@ -30,13 +38,16 @@ def predict_sentiment_local(text: str, user_id: int = None):
 
     # Save to DB if user_id provided
     if user_id is not None:
-        save_result(
-            text=text,
-            aspect=aspect,
-            sentiment=sentiment,
-            confidence=confidence,
-            user_id=user_id
-        )
+        try:
+            save_result(
+                text=text,
+                aspect=aspect,
+                sentiment=sentiment,
+                confidence=confidence,
+                user_id=user_id
+            )
+        except Exception:
+            pass  # 🔥 Prevent DB crash
 
     # Return structured response
     return {
@@ -53,18 +64,26 @@ def predict_aspects_local(text: str, user_id: int = None):
     Run aspect-based sentiment detection.
     Saves each aspect result if user_id is provided.
     """
-    result = analyze_aspects(text)
+
+    try:
+        result = analyze_aspects(text)
+    except Exception:
+        return {"text": text, "aspects": []}
+
     aspects = result.get("aspects", [])
 
     if user_id is not None:
         for item in aspects:
-            save_result(
-                text=text,
-                aspect=item["aspect"],
-                sentiment=item["sentiment"],
-                confidence=item["confidence"],
-                user_id=user_id
-            )
+            try:
+                save_result(
+                    text=text,
+                    aspect=item["aspect"],
+                    sentiment=item["sentiment"],
+                    confidence=item["confidence"],
+                    user_id=user_id
+                )
+            except Exception:
+                pass  # 🔥 Prevent DB crash
 
     return result
 
@@ -88,6 +107,8 @@ def analytics_user_local(user_id: int):
             for r in results
         ]
         return data
+    except Exception:
+        return []  # 🔥 Prevent crash if DB fails
     finally:
         session.close()
 
@@ -107,5 +128,7 @@ def login_local(username: str, password: str):
                 "username": user.username
             }
         return None
+    except Exception:
+        return None  # 🔥 Prevent crash if DB fails
     finally:
         session.close()

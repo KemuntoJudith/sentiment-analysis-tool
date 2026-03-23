@@ -89,7 +89,6 @@ def detect_aspects(text):
             if keyword in clean_text:
 
                 detected_aspects.append(aspect)
-
                 break
 
     return detected_aspects
@@ -103,26 +102,27 @@ def analyze_aspects(text):
 
     results = []
 
-    for aspect in aspects_found:
+    # 🔥 Call sentiment model ONCE (performance fix)
+    sentiment_result = predict_sentiment(text)
 
-        sentiment_result = predict_sentiment(text)
-
+    if aspects_found:
+        for aspect in aspects_found:
+            results.append({
+                "aspect": aspect,
+                "sentiment": sentiment_result["sentiment"],
+                "confidence": sentiment_result["confidence"]
+            })
+    else:
+        # 🔥 Fallback if no aspect detected (optional robustness)
         results.append({
-
-            "aspect": aspect,
-
+            "aspect": "general",
             "sentiment": sentiment_result["sentiment"],
-
             "confidence": sentiment_result["confidence"]
-
         })
 
     return {
-
         "text": text,
-
         "aspects": results
-
     }
 
 
@@ -133,15 +133,10 @@ if __name__ == "__main__":
     test_texts = [
 
         "The mobile banking app keeps crashing",
-
         "Customer service helped me resolve my issue quickly",
-
         "My transfer failed and the payment was not reversed",
-
         "The loan application process is very slow",
-
         "My credit card was declined at the ATM",
-
         "I cannot login to my account after activation"
     ]
 
@@ -154,4 +149,3 @@ if __name__ == "__main__":
         print(result)
 
         print("-------------------------------------------")
-
