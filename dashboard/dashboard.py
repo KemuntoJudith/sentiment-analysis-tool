@@ -269,6 +269,15 @@ with tab3:
                 ignore_index=True
             )
 
+            # ALSO add to main results_df for analytics
+            st.session_state["results_df"] = pd.concat(
+                [
+                    st.session_state["results_df"],
+                    pd.DataFrame([result_data])
+                ],
+                ignore_index=True
+            )
+
             # Save to database
             save_result(
                         text=result["text"],
@@ -318,7 +327,24 @@ with tab4:
 
     # Fetch all data from database
     results = get_all_results()
-    df = pd.DataFrame(results)
+    db_df = pd.DataFrame(results)
+
+    # Fetch session data
+    session_df = st.session_state.get("results_df", pd.DataFrame())
+
+    # Ensure same structure
+    required_cols = ["text", "sentiment", "aspect", "confidence", "timestamp"]
+    for col in required_cols:
+        if col not in session_df.columns:
+            session_df[col] = None
+
+    # Combine safely
+    if not db_df.empty and not session_df.empty:
+        df = pd.concat([db_df, session_df], ignore_index=True)
+    elif not db_df.empty:
+        df = db_df
+    else:
+        df = session_df
 
     if not df.empty:
         df["timestamp"] = pd.to_datetime(df["timestamp"])
@@ -363,7 +389,24 @@ st.subheader("Analytics & Insights")
 
 # Fetch all data from the database
 results = get_all_results()
-data = pd.DataFrame(results)
+db_data = pd.DataFrame(results)
+
+# Fetch session data
+session_data = st.session_state.get("results_df", pd.DataFrame())
+
+# Ensure same structure
+required_cols = ["text", "sentiment", "aspect", "confidence", "timestamp"]
+for col in required_cols:
+    if col not in session_data.columns:
+        session_data[col] = None
+
+# Combine safely
+if not db_data.empty and not session_data.empty:
+    data = pd.concat([db_data, session_data], ignore_index=True)
+elif not db_data.empty:
+    data = db_data
+else:
+    data = session_data
 
 if not data.empty:
     data["timestamp"] = pd.to_datetime(data["timestamp"])

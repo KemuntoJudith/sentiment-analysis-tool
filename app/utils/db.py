@@ -4,33 +4,29 @@ from sqlalchemy import create_engine, Column, String, Float, DateTime, Integer
 from sqlalchemy.orm import declarative_base, sessionmaker
 from datetime import datetime
 
-# -----------------------------
+
 # LOGGING SETUP
-# -----------------------------
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# -----------------------------
+
 # ENVIRONMENT DETECTION
-# -----------------------------
 IS_STREAMLIT_CLOUD = os.getenv("STREAMLIT_SERVER_PORT") is not None
 
-# -----------------------------
+
 # DATABASE CONFIG
-# -----------------------------
 if IS_STREAMLIT_CLOUD:
-    # ✅ Use SQLite in Streamlit Cloud
+    # Use SQLite in Streamlit Cloud
     DATABASE_URL = "sqlite:///sentiment.db"
 else:
-    # ✅ Use PostgreSQL locally (fallback to SQLite if not set)
+    # Use PostgreSQL locally (fallback to SQLite if not set)
     DATABASE_URL = os.getenv("DATABASE_URL") or \
         "postgresql+psycopg2://postgres:6063@localhost:5432/sentiment_analysis_tool"
 
 logger.info(f"Using DATABASE_URL: {DATABASE_URL}")
 
-# -----------------------------
+
 # ENGINE & SESSION
-# -----------------------------
 try:
     if DATABASE_URL.startswith("sqlite"):
         engine = create_engine(
@@ -50,9 +46,8 @@ except Exception as e:
 
 Base = declarative_base()
 
-# -----------------------------
+
 # MODELS
-# -----------------------------
 class InferenceResult(Base):
     __tablename__ = "inference_results"
 
@@ -63,9 +58,8 @@ class InferenceResult(Base):
     sentiment = Column(String)
     confidence = Column(Float)
 
-# -----------------------------
+
 # CREATE TABLES
-# -----------------------------
 if engine:
     try:
         Base.metadata.create_all(bind=engine)
@@ -73,9 +67,8 @@ if engine:
     except Exception as e:
         logger.error(f"❌ Table creation failed: {e}")
 
-# -----------------------------
+
 # SAVE FUNCTION
-# -----------------------------
 def save_result(text, aspect, sentiment, confidence):
     if not SessionLocal:
         logger.error("❌ SessionLocal is not initialized")
@@ -105,9 +98,8 @@ def save_result(text, aspect, sentiment, confidence):
     finally:
         session.close()
 
-# -----------------------------
+
 # FETCH FUNCTION
-# -----------------------------
 def get_all_results():
     if not SessionLocal:
         logger.error("❌ SessionLocal is not initialized")

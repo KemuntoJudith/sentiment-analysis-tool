@@ -83,7 +83,7 @@ def predict_aspects_local(text: str, user_id: int = None):
                     user_id=user_id
                 )
             except Exception:
-                pass  # 🔥 Prevent DB crash
+                pass  # Prevent DB crash
 
     return result
 
@@ -108,7 +108,7 @@ def analytics_user_local(user_id: int):
         ]
         return data
     except Exception:
-        return []  # 🔥 Prevent crash if DB fails
+        return []  # Prevent crash if DB fails
     finally:
         session.close()
 
@@ -129,6 +129,6 @@ def login_local(username: str, password: str):
             }
         return None
     except Exception:
-        return None  # 🔥 Prevent crash if DB fails
+        return None  # Prevent crash if DB fails
     finally:
         session.close()

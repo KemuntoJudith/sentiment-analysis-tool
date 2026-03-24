@@ -19,7 +19,7 @@ def predict_sentiment_route():
     data = request.get_json()
     text = data.get("text")
 
-    # ✅ FIX: default user_id if not provided
+    # default user_id if not provided
     user_id = data.get("user_id", 1)
 
     print("Text received:", text)
