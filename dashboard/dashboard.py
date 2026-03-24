@@ -146,7 +146,6 @@ with tab1:
                         aspect=result["aspect"],
                         sentiment=result["sentiment"],
                         confidence=result["confidence"],
-                        user_id=1  
                     )
 
                 except Exception as e:
@@ -180,7 +179,6 @@ def analyze_batch(df_upload):
                         aspect=res["aspect"],
                         sentiment=res["sentiment"],
                         confidence=res["confidence"],
-                        user_id=1  
                     )
                 
             except Exception as e:
@@ -277,7 +275,6 @@ with tab3:
                         aspect=result["aspect"],
                         sentiment=result["sentiment"],
                         confidence=result["confidence"],
-                        user_id=1  
                     )
 
             st.success("Feedback analyzed and saved!")
