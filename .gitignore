@@ -20,6 +20,7 @@ thesis_env/
 # Environment Variables / Secrets
 .env
 *.env
+.streamlit/secrets.toml
 
 
 # Data Files (Raw & Large Files)
@@ -45,7 +46,6 @@ Thumbs.db
 /content/
 
 # Model Files
-models/
 *.pt
 *.bin
 *.safetensors

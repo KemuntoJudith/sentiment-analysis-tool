@@ -1,9 +1,10 @@
-# sentiment-analysis-tool
-A sentiment analysis tool for the Kenyan Banking Sector
+## Customer Sentiment Monitoring Dashboard
+
+This repository contains the implementation of a machine learning based sentiment analysis system for the Kenyan banking sector developed as part of a Master's thesis at Strathmore University.
 
 Environment Setup
 1️ Clone the Repository
-git clone https://github.com/YOUR_USERNAME/sentiment-analysis-tool.git
+git clone https://github.com/KemuntoJudith/sentiment-analysis-tool.git
 cd sentiment-analysis-tool
 
 2️ Create Virtual Environment
@@ -27,3 +28,16 @@ pip install -r requirements.txt
 5️ Run Jupyter Notebook
 jupyter notebook
 
+
+
+### Live Demo
+Access the Streamlit dashboard here:
+
+https://sentiment-analysis-tool-2026.streamlit.app/ 
+
+### Features
+- Real-time sentiment analysis
+- Batch feedback processing
+- Aspect-based sentiment classification
+- Interactive analytics dashboard
+- Downloadable reports
