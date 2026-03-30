@@ -20,7 +20,10 @@ LOCAL_MODEL_PATH = "models/finbert_final"
 # Fallback to Hugging Face if local model missing
 HF_MODEL_PATH = "ProsusAI/finbert"
 
-MODEL_PATH = LOCAL_MODEL_PATH if os.path.exists(LOCAL_MODEL_PATH) else HF_MODEL_PATH
+MODEL_PATH = "models/finbert_final"
+
+if not os.path.exists(MODEL_PATH):
+    raise FileNotFoundError(f"❌ Model not found at {MODEL_PATH}")
 
 print(f"📌 Using model path: {MODEL_PATH}")
 
