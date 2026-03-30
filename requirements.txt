@@ -8,8 +8,10 @@ kaleido==0.2.1
 reportlab
 
 scikit-learn==1.5.2
+
 transformers==4.41.2
-tokenizers
+tokenizers==0.19.1   
+
 torch
 
 requests
