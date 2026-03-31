@@ -93,15 +93,21 @@ def predict_sentiment(text: str):
 
         predicted_class = torch.argmax(probs, dim=1).item()
 
+    labels = model.config.id2label
+    raw_label = labels[predicted_class]
 
-        labels = {
-            0: "negative",
-            1: "neutral",
-            2: "positive"
-        }
+    label_map = {
+        "LABEL_0": "negative",
+        "LABEL_1": "neutral",
+        "LABEL_2": "positive"
+    }
+
+    if raw_label in label_map:
+        sentiment = label_map[raw_label]
+    else:
+        sentiment = raw_label.lower()
 
 
-        sentiment = labels[predicted_class]
         confidence = probs[0, predicted_class].item()
 
     return {
