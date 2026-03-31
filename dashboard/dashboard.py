@@ -10,6 +10,15 @@ from datetime import datetime
 import streamlit as st
 from app.models.finbert_model import load_model, MODEL_PATH
 
+# DEBUG SECTION
+st.subheader("Model Debug Info")
+
+st.write("MODEL PATH:", MODEL_PATH)
+
+tokenizer, model = load_model()
+
+st.write("MODEL LABELS:", model.config.id2label)  
+
 # Add project root to sys.path
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if PROJECT_ROOT not in sys.path:
@@ -502,11 +511,4 @@ if not data.empty:
 else:
     st.info("No data available yet.")
 
-# 🔍 DEBUG SECTION
-st.subheader("🔍 Model Debug Info")
-
-st.write("MODEL PATH:", MODEL_PATH)
-
-tokenizer, model = load_model()
-
-st.write("MODEL LABELS:", model.config.id2label)    
+ 
