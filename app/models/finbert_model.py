@@ -93,20 +93,8 @@ def predict_sentiment(text: str):
         predicted_class = torch.argmax(probs, dim=1).item()
 
     labels = model.config.id2label
-    raw_label = labels[predicted_class]
-
-    label_map = {
-        "LABEL_0": "negative",
-        "LABEL_1": "neutral",
-        "LABEL_2": "positive"
-    }
-
-    confidence = probs[0, predicted_class].item()
-
-    if raw_label in label_map:
-        sentiment = label_map[raw_label]
-    else:
-        sentiment = raw_label.lower()
+    sentiment = labels[predicted_class].lower()
+    confidence = probs[0][predicted_class].item()
 
     return {
         "text": text,
@@ -114,7 +102,8 @@ def predict_sentiment(text: str):
         "confidence": round(confidence, 3)
     }
 
-
+    #debug
+    st.write("Using labels:", model.config.id2label)
 
 # BATCH PREDICTION
 def predict_batch(text_list):
