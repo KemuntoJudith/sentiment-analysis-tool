@@ -6,9 +6,10 @@ import os
 import io
 import time
 from datetime import datetime
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import streamlit as st
-from app.models.finbert_model import load_model, MODEL_PATH
+from models.finbert_model import load_model, MODEL_PATH
 
 # DEBUG SECTION
 st.subheader("Model Debug Info")
