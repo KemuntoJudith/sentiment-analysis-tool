@@ -6,19 +6,7 @@ import os
 import io
 import time
 from datetime import datetime
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-import streamlit as st
-from models.finbert_model import load_model, MODEL_PATH
-
-# DEBUG SECTION
-st.subheader("Model Debug Info")
-
-st.write("MODEL PATH:", MODEL_PATH)
-
-tokenizer, model = load_model()
-
-st.write("MODEL LABELS:", model.config.id2label)  
 
 # Add project root to sys.path
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -44,9 +32,22 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
 # Local models & DB
-from app.models.finbert_model import predict_sentiment
+from app.models.finbert_model import predict_sentiment, load_model, MODEL_PATH
 from app.models.absa_model import analyze_aspects
 from app.utils.db import save_result, get_all_results
+
+# DEBUG SECTION
+st.subheader("Model Debug Info")
+
+st.write("MODEL PATH:", MODEL_PATH)
+try:
+    tokenizer, model = load_model()
+    st.write("Model loaded successfully!")
+    st.write("Model labels:", model.config.id2label)
+except Exception as e:
+    st.error(f"Failed to load model: {e}")
+
+st.write("MODEL LABELS:", model.config.id2label)  
 
 # CONFIG
 API_BASE = st.secrets.get("API_BASE") or os.getenv("API_BASE")

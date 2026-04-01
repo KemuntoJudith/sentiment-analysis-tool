@@ -20,12 +20,12 @@ LOCAL_MODEL_PATH = "models/finbert_final"
 # Fallback to Hugging Face if local model missing
 HF_MODEL_PATH = "ProsusAI/finbert"
 
-MODEL_PATH = "models/finbert_final"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "..", "..", "models", "finbert_final")
+MODEL_PATH = os.path.abspath(MODEL_PATH)
 
 if not os.path.exists(MODEL_PATH):
-    raise FileNotFoundError(f"❌ Model not found at {MODEL_PATH}")
-
-print(f"📌 Using model path: {MODEL_PATH}")
+    print(f"⚠ Local model not found at {MODEL_PATH}, will use Hugging Face fallback")
 
 
 # LOAD MODEL
@@ -41,21 +41,20 @@ def load_model():
         try:
             tokenizer = AutoTokenizer.from_pretrained(
                 MODEL_PATH,
-                local_files_only=os.path.exists(LOCAL_MODEL_PATH)
+                local_files_only=os.path.exists(MODEL_PATH)
             )
 
             model = AutoModelForSequenceClassification.from_pretrained(
                 MODEL_PATH,
-                local_files_only=os.path.exists(LOCAL_MODEL_PATH)
+                local_files_only=os.path.exists(MODEL_PATH)
             )
 
             model.eval()
-
-            print("✅ Model loaded successfully")
+            print("✅ Local model loaded")
 
         except Exception as e:
-            print(f"❌ Failed to load local model: {e}")
-            print("🔁 Falling back to Hugging Face model...")
+            print(f"❌ Local load failed: {e}")
+            print("🔁 Falling back to Hugging Face")
 
             tokenizer = AutoTokenizer.from_pretrained(HF_MODEL_PATH)
             model = AutoModelForSequenceClassification.from_pretrained(HF_MODEL_PATH)
@@ -102,13 +101,12 @@ def predict_sentiment(text: str):
         "LABEL_2": "positive"
     }
 
+    confidence = probs[0, predicted_class].item()
+
     if raw_label in label_map:
         sentiment = label_map[raw_label]
     else:
         sentiment = raw_label.lower()
-
-
-        confidence = probs[0, predicted_class].item()
 
     return {
         "text": text,
