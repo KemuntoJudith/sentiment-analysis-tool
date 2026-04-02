@@ -75,13 +75,13 @@ def get_labels():
 def predict_sentiment(text: str):
     tokenizer, model = load_model()
 
-     # 🔍 DEBUG MODEL SOURCE (ADD HERE)
-    try:
-        st.write("Model name:", model.name_or_path)
-        st.write("Model type:", str(type(model)))
-    except:
-        print("Model name:", model.name_or_path)
-        print("Model type:", str(type(model)))
+     # DEBUG MODEL SOURCE (ADD HERE)
+    print("MODEL NAME:", model.name_or_path)
+    print("MODEL TYPE:", type(model))
+    st.write("MODEL NAME:", model.name_or_path)
+    st.write("MODEL TYPE:", str(type(model)))
+
+    st.info(f"Loaded model from: {model.name_or_path}")
     
     # Preprocess
     cleaned_text = preprocess_text(text)
