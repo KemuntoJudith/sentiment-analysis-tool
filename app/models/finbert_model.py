@@ -96,22 +96,32 @@ def predict_sentiment(text: str):
     sentiment = labels[predicted_class].lower()
     confidence = probs[0][predicted_class].item()
 
-    return {
+    
+    # DEBUG BLOCK
+    try:
+        st.write({
         "text": text,
-        "sentiment": sentiment,
-        "confidence": round(confidence, 3)
+        "predicted_index": predicted_class,
+        "raw_label": raw_label,
+        "final_sentiment": sentiment,
+        "confidence": confidence
+        })
+    except:
+        print({
+        "text": text,
+        "predicted_index": predicted_class,
+        "raw_label": raw_label,
+        "final_sentiment": sentiment,
+        "confidence": confidence
+    })
+
+    return {
+    "text": st.text,
+    "sentiment": sentiment,
+    "confidence": round(confidence, 3)
     }
 
-    #debug
-    st.write("Using labels:", model.config.id2label)
-
-    st.write({
-    "text": text,
-    "predicted_index": predicted_class,
-    "raw_label": raw_label,
-    "final_sentiment": sentiment,
-    "confidence": confidence
-})
+ 
 
 # BATCH PREDICTION
 def predict_batch(text_list):
