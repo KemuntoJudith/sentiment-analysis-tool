@@ -89,11 +89,12 @@ def predict_sentiment(text: str):
     with torch.no_grad():
         outputs = model(**inputs)
         probs = F.softmax(outputs.logits, dim=1)
-
         predicted_class = torch.argmax(probs, dim=1).item()
+        
 
     labels = model.config.id2label
-    sentiment = labels[predicted_class].lower()
+    raw_label = labels[predicted_class] 
+    sentiment = raw_label.lower()
     confidence = probs[0][predicted_class].item()
 
     
@@ -116,7 +117,7 @@ def predict_sentiment(text: str):
     })
 
     return {
-    "text": st.text,
+    "text": text,
     "sentiment": sentiment,
     "confidence": round(confidence, 3)
     }
