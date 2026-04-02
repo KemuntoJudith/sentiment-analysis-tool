@@ -105,6 +105,14 @@ def predict_sentiment(text: str):
     #debug
     st.write("Using labels:", model.config.id2label)
 
+    st.write({
+    "text": text,
+    "predicted_index": predicted_class,
+    "raw_label": raw_label,
+    "final_sentiment": sentiment,
+    "confidence": confidence
+})
+
 # BATCH PREDICTION
 def predict_batch(text_list):
     results = []
