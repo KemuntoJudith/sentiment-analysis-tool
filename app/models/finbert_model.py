@@ -76,7 +76,7 @@ def predict_sentiment(text: str):
     tokenizer, model = load_model()
 
     # Preprocess
-    cleaned_text = text 
+    cleaned_text = preprocess_text(text)
 
     inputs = tokenizer(
         cleaned_text,
