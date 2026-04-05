@@ -1,36 +1,36 @@
-# --- Core App ---
+# Core App
 streamlit>=1.33,<2.0
 
-# --- Data Processing ---
+# Data Processing
 pandas>=2.2,<3.0
 numpy>=1.26,<2.0
 
-# --- Visualization ---
+# Visualization
 plotly>=5.20,<6.0
 kaleido>=0.2.1
 
-# --- Machine Learning ---
+# Machine Learning
 scikit-learn>=1.4,<2.0
 
-# --- NLP (FinBERT) ---
+# NLP (FinBERT)
 transformers>=4.41,<5.0
 torch>=2.2,<3.0
 safetensors>=0.4,<1.0
 
-# --- Utilities ---
+# Utilities
 requests>=2.31,<3.0
 tqdm>=4.66,<5.0
 python-dotenv>=1.0,<2.0
 
-# --- Database ---
+# Database
 psycopg2-binary>=2.9,<3.0
 sqlalchemy>=2.0,<3.0
 
-# --- Backend API ---
+# Backend API
 flask>=3.0,<4.0
 
-# --- Authentication ---
+# Authentication
 passlib[bcrypt]>=1.7,<2.0
 
-# --- Reporting ---
+# Reporting
 reportlab>=4.0,<5.0

@@ -11,21 +11,11 @@ from app.preprocessing.text_preprocessing import preprocess_text
 
 # MODEL PATH CONFIG (SAFE)
 
-# Detect Streamlit Cloud
-IS_STREAMLIT_CLOUD = os.getenv("STREAMLIT_SERVER_PORT") is not None
-
-# Use relative path
-LOCAL_MODEL_PATH = "models/finbert_final"
-
-# Fallback to Hugging Face if local model missing
-HF_MODEL_PATH = "ProsusAI/finbert"
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "..", "..", "models", "finbert_final")
-MODEL_PATH = os.path.abspath(MODEL_PATH)
+MODEL_PATH = os.path.abspath(os.path.join(BASE_DIR, "..", "..", "models", "finbert_final"))
 
 if not os.path.exists(MODEL_PATH):
-    print(f"⚠ Local model not found at {MODEL_PATH}, will use Hugging Face fallback")
+    st.error(f"❌ Model folder not found at {MODEL_PATH}")
 
 
 # LOAD MODEL
@@ -39,29 +29,22 @@ def load_model():
 
     if tokenizer is None or model is None:
         try:
-            tokenizer = AutoTokenizer.from_pretrained(
-                MODEL_PATH,
-                local_files_only=os.path.exists(MODEL_PATH)
-            )
-
-            model = AutoModelForSequenceClassification.from_pretrained(
-                MODEL_PATH,
-                local_files_only=os.path.exists(MODEL_PATH)
-            )
+            # FORCE LOCAL MODEL LOAD
+            tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+            model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
 
             model.eval()
-            print("✅ Local model loaded")
+
+            print("✅ Local fine-tuned model loaded")
+            st.success(f"✅ Loaded fine-tuned model from {MODEL_PATH}")
 
         except Exception as e:
-            print(f"❌ Local load failed: {e}")
-            print("🔁 Falling back to Hugging Face")
-
-            tokenizer = AutoTokenizer.from_pretrained(HF_MODEL_PATH)
-            model = AutoModelForSequenceClassification.from_pretrained(HF_MODEL_PATH)
-            model.eval()
+            # ❌ STOP SILENT FALLBACK
+            st.error("❌ FAILED to load fine-tuned model")
+            st.error(str(e))
+            raise e
 
     return tokenizer, model
-
 
 
 # GET LABELS
@@ -70,17 +53,16 @@ def get_labels():
     return model.config.id2label
 
 
-
 # PREDICTION FUNCTION
 def predict_sentiment(text: str):
     tokenizer, model = load_model()
 
-     # DEBUG MODEL SOURCE (ADD HERE)
+    # DEBUG MODEL SOURCE
     print("MODEL NAME:", model.name_or_path)
     print("MODEL TYPE:", type(model))
+
     st.write("MODEL NAME:", model.name_or_path)
     st.write("MODEL TYPE:", str(type(model)))
-
     st.info(f"Loaded model from: {model.name_or_path}")
     
     # Preprocess
@@ -98,50 +80,44 @@ def predict_sentiment(text: str):
         outputs = model(**inputs)
         probs = F.softmax(outputs.logits, dim=1)
         predicted_class = torch.argmax(probs, dim=1).item()
-        
 
     labels = model.config.id2label
-    raw_label = labels[predicted_class] 
+    raw_label = labels[predicted_class]
     sentiment = raw_label.lower()
     confidence = probs[0][predicted_class].item()
 
-    
     # DEBUG BLOCK
     try:
         st.write({
-        "text": text,
-        "predicted_index": predicted_class,
-        "raw_label": raw_label,
-        "final_sentiment": sentiment,
-        "confidence": confidence
+            "text": text,
+            "predicted_index": predicted_class,
+            "raw_label": raw_label,
+            "final_sentiment": sentiment,
+            "confidence": confidence
         })
     except:
         print({
-        "text": text,
-        "predicted_index": predicted_class,
-        "raw_label": raw_label,
-        "final_sentiment": sentiment,
-        "confidence": confidence
-    })
+            "text": text,
+            "predicted_index": predicted_class,
+            "raw_label": raw_label,
+            "final_sentiment": sentiment,
+            "confidence": confidence
+        })
 
     return {
-    "text": text,
-    "sentiment": sentiment,
-    "confidence": round(confidence, 3)
+        "text": text,
+        "sentiment": sentiment,
+        "confidence": round(confidence, 3)
     }
 
- 
 
 # BATCH PREDICTION
 def predict_batch(text_list):
     results = []
-
     for text in text_list:
         result = predict_sentiment(text)
         results.append(result)
-
     return results
-
 
 
 # TEST BLOCK
