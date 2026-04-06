@@ -12,7 +12,7 @@ from app.preprocessing.text_preprocessing import preprocess_text
 # MODEL PATH CONFIG (SAFE)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.abspath(os.path.join(BASE_DIR, "..", "..", "models", "finbert_final"))
+MODEL_PATH = "KemuntoJudith/finbert-sentiment"
 
 if not os.path.exists(MODEL_PATH):
     st.error(f"❌ Model folder not found at {MODEL_PATH}")
@@ -22,27 +22,14 @@ if not os.path.exists(MODEL_PATH):
 tokenizer = None
 model = None
 
-
 @st.cache_resource(show_spinner="Loading FinBERT model...")
 def load_model():
-    global tokenizer, model
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
+    model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
 
-    if tokenizer is None or model is None:
-        try:
-            # FORCE LOCAL MODEL LOAD
-            tokenizer = AutoTokenizer.from_pretrained(MODEL_PATH)
-            model = AutoModelForSequenceClassification.from_pretrained(MODEL_PATH)
+    model.eval()
 
-            model.eval()
-
-            print("✅ Local fine-tuned model loaded")
-            st.success(f"✅ Loaded fine-tuned model from {MODEL_PATH}")
-
-        except Exception as e:
-            # ❌ STOP SILENT FALLBACK
-            st.error("❌ FAILED to load fine-tuned model")
-            st.error(str(e))
-            raise e
+    st.success(f"Loaded model from Hugging Face: {MODEL_PATH}")
 
     return tokenizer, model
 
