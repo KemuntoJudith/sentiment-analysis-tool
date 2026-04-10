@@ -69,7 +69,7 @@ if engine:
 
 
 # SAVE FUNCTION
-def save_result(text, aspect, sentiment, confidence):
+def save_result(text, aspect, sentiment, confidence, timestamp=None):
     if not SessionLocal:
         logger.error("❌ SessionLocal is not initialized")
         return False
@@ -77,11 +77,16 @@ def save_result(text, aspect, sentiment, confidence):
     session = SessionLocal()
 
     try:
+        # If timestamp not provided, use current time
+        if timestamp is None:
+            timestamp = datetime.utcnow()
+
         record = InferenceResult(
             text=text,
             aspect=aspect,
             sentiment=sentiment,
-            confidence=confidence
+            confidence=confidence,
+            timestamp=timestamp  
         )
 
         session.add(record)

@@ -14,8 +14,10 @@ from app.preprocessing.text_preprocessing import preprocess_text
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = "KemuntoJudith/finbert-sentiment"
 
-if not os.path.exists(MODEL_PATH):
-    st.error(f"❌ Model folder not found at {MODEL_PATH}")
+# Only check if it's a local path
+if os.path.isdir(MODEL_PATH):
+    if not os.path.exists(MODEL_PATH):
+        st.error(f"Model folder not found at {MODEL_PATH}")
 
 
 # LOAD MODEL
@@ -29,8 +31,6 @@ def load_model():
 
     model.eval()
 
-    st.success(f"Loaded model from Hugging Face: {MODEL_PATH}")
-
     return tokenizer, model
 
 
@@ -43,14 +43,6 @@ def get_labels():
 # PREDICTION FUNCTION
 def predict_sentiment(text: str):
     tokenizer, model = load_model()
-
-    # DEBUG MODEL SOURCE
-    print("MODEL NAME:", model.name_or_path)
-    print("MODEL TYPE:", type(model))
-
-    st.write("MODEL NAME:", model.name_or_path)
-    st.write("MODEL TYPE:", str(type(model)))
-    st.info(f"Loaded model from: {model.name_or_path}")
     
     # Preprocess
     cleaned_text = preprocess_text(text)
@@ -68,34 +60,15 @@ def predict_sentiment(text: str):
         probs = F.softmax(outputs.logits, dim=1)
         predicted_class = torch.argmax(probs, dim=1).item()
 
-    labels = model.config.id2label
-    raw_label = labels[predicted_class]
-    sentiment = raw_label.lower()
+    # LABEL MAPPING
+    sentiment = model.config.id2label[predicted_class].lower()
     confidence = probs[0][predicted_class].item()
 
-    # DEBUG BLOCK
-    try:
-        st.write({
-            "text": text,
-            "predicted_index": predicted_class,
-            "raw_label": raw_label,
-            "final_sentiment": sentiment,
-            "confidence": confidence
-        })
-    except:
-        print({
-            "text": text,
-            "predicted_index": predicted_class,
-            "raw_label": raw_label,
-            "final_sentiment": sentiment,
-            "confidence": confidence
-        })
-
     return {
-        "text": text,
-        "sentiment": sentiment,
-        "confidence": round(confidence, 3)
-    }
+    "text": text,
+    "sentiment": sentiment,
+    "confidence": round(confidence, 3)
+}
 
 
 # BATCH PREDICTION

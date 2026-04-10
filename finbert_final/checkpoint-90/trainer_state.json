@@ -10,14 +10,14 @@
   "log_history": [
     {
       "epoch": 1.0,
-      "eval_Accuracy": 0.85,
-      "eval_F1": 0.8506180139253153,
-      "eval_Precision": 0.854959301262118,
-      "eval_Recall": 0.85,
-      "eval_loss": 0.37350502610206604,
-      "eval_runtime": 229.4352,
-      "eval_samples_per_second": 0.697,
-      "eval_steps_per_second": 0.087,
+      "eval_Accuracy": 0.825,
+      "eval_F1": 0.8218427112722109,
+      "eval_Precision": 0.8432133838383837,
+      "eval_Recall": 0.825,
+      "eval_loss": 0.4010133743286133,
+      "eval_runtime": 27.8778,
+      "eval_samples_per_second": 5.739,
+      "eval_steps_per_second": 0.717,
       "step": 90
     }
   ],
