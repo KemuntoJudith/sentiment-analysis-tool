@@ -30,6 +30,8 @@ from reportlab.lib.styles import getSampleStyleSheet
 from app.models.finbert_model import predict_sentiment
 from app.models.absa_model import analyze_aspects
 from app.utils.db import save_result, get_all_results 
+from app.models.explainability import explain_with_lime
+from app.models.finbert_model import get_attention_weights
 
 # CONFIG
 API_BASE = st.secrets.get("API_BASE") or os.getenv("API_BASE")
@@ -198,10 +200,14 @@ elif menu == "💬 Single Message":
         user_input = st.text_area("Enter customer feedback")
         submitted = st.form_submit_button("Analyze Sentiment")
 
-    if submitted and user_input.strip():
+    if submitted:
+        if not user_input or user_input.strip() == "":
+            st.warning("Please enter valid feedback.")
+            st.stop()    
         result = call_predict_sentiment(user_input)
         result["timestamp"] = datetime.now()
 
+                       
         st.session_state["results_df"] = pd.concat(
             [st.session_state["results_df"], pd.DataFrame([result])],
             ignore_index=True
@@ -217,7 +223,72 @@ elif menu == "💬 Single Message":
         col1, col2, col3 = st.columns(3)
         col1.metric("Sentiment", result["sentiment"].capitalize())
         col2.metric("Confidence", f"{result['confidence'] * 100:.1f}%")
-        col3.metric("Aspect", result["aspect"].replace("_", " ").title())
+        col3.metric("Aspect", result["aspect"].replace("_", " ").title())        
+
+        # ONLY NOW run explainability
+        if result["sentiment"] != "error":
+            if len(user_input.split()) < 3:
+                st.info("Explainability requires at least 3 words.")
+            else:
+                # run explainability
+                st.markdown("### 🔍 Model Explainability")
+
+            tab1, tab2 = st.tabs(["🧠 LIME Explanation", "🎯 Attention Weights"])
+
+            # LIME
+            with tab1:
+                st.markdown("#### Why did the model predict this?")
+
+                try:
+                    explanation = explain_with_lime(user_input)
+
+                    if explanation is None:
+                        st.warning("LIME explanation could not be generated.")
+
+                    elif hasattr(explanation, "as_html"):
+                        st.components.v1.html(
+                            explanation.as_html(),
+                            height=400,
+                            scrolling=True
+                        )
+
+                    else:
+                        st.warning("Unexpected explanation format returned.")
+
+                except Exception as e:
+                    st.warning(f"LIME explanation failed: {e}")
+
+            # ATTENTION
+            with tab2:
+                st.markdown("#### Important Words (Model Attention)")
+
+                try:
+                    tokens, scores = get_attention_weights(user_input)
+
+                    # SAFETY CHECK
+                    if not tokens or not scores:
+                        st.info("No attention data available.")
+                    else:
+                        max_score = max(scores) if max(scores) > 0 else 1
+
+                        highlighted_text = ""
+                        for token, score in zip(tokens, scores):
+                            normalized = score / max_score
+
+                            highlighted_text += f"""
+                            <span style="
+                                background-color: rgba(255, 0, 0, {normalized});
+                                padding: 2px;
+                                margin: 1px;
+                                border-radius: 3px;">
+                                {token}
+                            </span>
+                            """
+
+                        st.markdown(highlighted_text, unsafe_allow_html=True)
+
+                except Exception as e:
+                    st.warning(f"Attention visualization failed: {e}")
 
 
 # BATCH UPLOAD
